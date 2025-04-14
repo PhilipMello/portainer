@@ -1,0 +1,35 @@
+
+services:
+  app:
+    image: jc21/nginx-proxy-manager:latest
+    ports:
+      # Public HTTP Port
+      - "80:80"
+      # Public HTTPS Port
+      - "443:443"
+      # Admin Web Port
+      - "81:81"
+    networks:
+      - nginx_proxy_manager_public
+    volumes:
+      - nginx_proxy_manager_data:/data
+      - nginx_proxy_manager_letsencrypt:/etc/letsencrypt
+    deploy:
+      mode: replicated
+      replicas: 1
+      resources:
+        limits:
+          cpus: "0.1"
+          memory: 1024M
+      placement:
+        constraints:
+          - node.role == manager
+volumes:
+  nginx_proxy_manager_data:
+    external: true
+  nginx_proxy_manager_letsencrypt:
+    external: true
+
+networks:
+  nginx_proxy_manager_public:
+    external: true
